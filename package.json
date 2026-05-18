@@ -1,0 +1,13 @@
+{
+  "name": "policy-red-tool",
+  "version": "1.0.0",
+  "description": "政策红利追踪Web工具",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "docx": "^9.6.1"
+  }
+}

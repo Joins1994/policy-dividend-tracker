@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政策红利追踪工具</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-left">
+                <h1>🏛️ 政策红利追踪工具</h1>
+                <span class="version">v1.0.0</span>
+            </div>
+            <div class="header-right">
+                <span class="last-updated" id="lastUpdated">最后更新: 加载中...</span>
+                <button class="btn btn-primary" onclick="refreshData()">🔄 刷新数据</button>
+            </div>
+        </header>
+
+        <!-- 标签页 -->
+        <div class="tabs">
+            <button class="tab active" data-tab="dashboard">📊 数据概览</button>
+            <button class="tab" data-tab="form">📝 表单录入</button>
+            <button class="tab" data-tab="import">📁 文件导入</button>
+            <button class="tab" data-tab="chart">📈 数据图表</button>
+            <button class="tab" data-tab="report">📄 生成报告</button>
+        </div>
+
+        <!-- 数据概览 -->
+        <div class="tab-content active" id="dashboard">
+            <div class="dashboard-grid">
+                <!-- 财政预算卡片 -->
+                <div class="card">
+                    <h3 class="card-title">💰 财政预算</h3>
+                    <div class="card-content" id="fiscalBudget"></div>
+                </div>
+
+                <!-- 两新政策卡片 -->
+                <div class="card">
+                    <h3 class="card-title">🎯 两新政策</h3>
+                    <div class="card-content" id="twoNewPolicy"></div>
+                </div>
+
+                <!-- 融资数据卡片 -->
+                <div class="card">
+                    <h3 class="card-title">💹 融资数据</h3>
+                    <div class="card-content" id="investment"></div>
+                </div>
+
+                <!-- 低空经济卡片 -->
+                <div class="card">
+                    <h3 class="card-title">✈️ 低空经济</h3>
+                    <div class="card-content" id="lowAltitude"></div>
+                </div>
+
+                <!-- 投资建议卡片 -->
+                <div class="card full-width">
+                    <h3 class="card-title">⭐ 投资建议</h3>
+                    <div class="card-content">
+                        <table class="data-table" id="sectorsTable">
+                            <thead>
+                                <tr>
+                                    <th>领域</th>
+                                    <th>评级</th>
+                                    <th>信号强度</th>
+                                    <th>核心逻辑</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sectorsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 表单录入 -->
+        <div class="tab-content" id="form">
+            <form id="dataForm" class="data-form">
+                <div class="form-section">
+                    <h3>📊 财政预算数据</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>全国财政赤字（亿元）</label>
+                            <input type="number" name="deficit" id="deficit" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label>赤字率（%）</label>
+                            <input type="number" name="deficitRate" id="deficitRate" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>超长期特别国债（亿元）</label>
+                            <input type="number" name="longTermBond" id="longTermBond" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label>地方政府专项债（亿元）</label>
+                            <input type="number" name="specialBond" id="specialBond" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label>中央预算内投资（亿元）</label>
+                            <input type="number" name="centralBudget" id="centralBudget" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label>银行注资特别国债（亿元）</label>
+                            <input type="number" name="bankCapitalBond" id="bankCapitalBond" step="100">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🎯 两新政策数据</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>全年目标（亿元）</label>
+                            <input type="number" name="totalBudget" id="totalBudget" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label>累计下达（亿元）</label>
+                            <input type="number" name="cumulative" id="cumulative" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label>完成进度（%）</label>
+                            <input type="number" name="progressRate" id="progressRate" step="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>💹 融资数据</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Q1融资事件数（起）</label>
+                            <input type="number" name="q1_events" id="q1_events">
+                        </div>
+                        <div class="form-group">
+                            <label>Q1融资总额（亿元）</label>
+                            <input type="number" name="q1_amount" id="q1_amount">
+                        </div>
+                        <div class="form-group">
+                            <label>同比增长（%）</label>
+                            <input type="number" name="yoy" id="yoy">
+                        </div>
+                        <div class="form-group">
+                            <label>全球AI投资（亿美元）</label>
+                            <input type="number" name="aiGlobal" id="aiGlobal">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>✈️ 低空经济数据</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>市场规模（亿元）</label>
+                            <input type="number" name="marketSize" id="marketSize">
+                        </div>
+                        <div class="form-group">
+                            <label>eVTOL市场规模（亿元）</label>
+                            <input type="number" name="evtvolMarket" id="evtvolMarket">
+                        </div>
+                        <div class="form-group">
+                            <label>无人机登记（万架）</label>
+                            <input type="number" name="uavRegistration" id="uavRegistration">
+                        </div>
+                        <div class="form-group">
+                            <label>相关企业（万家）</label>
+                            <input type="number" name="companies" id="companies" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 保存数据</button>
+                    <button type="reset" class="btn btn-secondary">🔄 重置表单</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 文件导入 -->
+        <div class="tab-content" id="import">
+            <div class="import-section">
+                <h3>📁 导入JSON数据</h3>
+                <p class="tip">请上传包含政策数据的JSON文件，格式请参考导出数据。</p>
+                <div class="file-upload">
+                    <input type="file" id="jsonFile" accept=".json">
+                    <label for="jsonFile" class="file-label">
+                        <span class="file-icon">📂</span>
+                        <span class="file-text">选择JSON文件或拖拽到此处</span>
+                    </label>
+                    <div id="filePreview" class="file-preview"></div>
+                </div>
+                <button class="btn btn-primary" onclick="importFile()">📥 导入数据</button>
+
+                <div class="import-section">
+                    <h3>📋 导入模板下载</h3>
+                    <button class="btn btn-secondary" onclick="downloadTemplate()">📥 下载导入模板</button>
+                    <button class="btn btn-secondary" onclick="exportData()">📤 导出当前数据</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据图表 -->
+        <div class="tab-content" id="chart">
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>💰 两新政策资金下达进度</h3>
+                    <canvas id="twoNewChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>💹 融资数据趋势</h3>
+                    <canvas id="investmentChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>✈️ 低空经济市场规模</h3>
+                    <canvas id="lowAltitudeChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>⭐ 行业投资信号强度</h3>
+                    <canvas id="sectorsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 生成报告 -->
+        <div class="tab-content" id="report">
+            <div class="report-section">
+                <h3>📄 生成政策红利调研报告</h3>
+                <p class="tip">基于当前数据生成完整的调研分析报告</p>
+                <div class="report-actions">
+                    <button class="btn btn-primary btn-large" onclick="generateReport()">📊 生成报告</button>
+                    <button class="btn btn-secondary btn-large" onclick="downloadReport()">📥 下载报告</button>
+                </div>
+                <div id="reportPreview" class="report-preview"></div>
+            </div>
+        </div>
+
+        <!-- 提示消息 -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
